@@ -1,0 +1,31 @@
+---
+- name: install a package
+  win_chocolatey:
+    name: putty.install
+    state: latest
+
+- name: List services
+  win_shell: "net start"
+  register: debug_services
+
+- name: Display services
+  debug:
+    var: debug_services
+
+- name: Set a service to start
+  win_service:
+    name: Windows Firewall
+    state: started
+    start_mode: auto
+  when: ansible_distribution == "Microsoft Windows Server 2012 R2 Standard"
+
+- name: Open a port
+  win_firewall_rule:
+    name: SMTP
+    localport: 25
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+  when: ansible_distribution == "Microsoft Windows Server 2012 R2 Standard"

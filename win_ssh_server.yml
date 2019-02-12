@@ -1,0 +1,36 @@
+---
+- name: install SSH
+  hosts: windows
+
+  vars_files: ssh_var.yml
+
+  tasks:
+    - name: Install SSH
+      win_chocolatey:
+        name: "{{ package_name }}"
+        params: "{{ parameters }}"
+        state: latest
+
+    - name: List services
+      win_shell: "net start"
+      register: debug_services
+
+    - name: Print services
+      debug:
+        var: debug_services
+
+    - name: Start SSH
+      win_service:
+        name: sshd
+        state: started
+        start_mode: auto
+
+    - name: Open FW
+      win_firewall_rule:
+        name: "{{ service_name }}"
+        localport: "{{ local_port }}"
+        action: allow
+        direction: in
+        protocol: tcp
+        state: present
+        enabled: yes
