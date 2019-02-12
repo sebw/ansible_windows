@@ -1,0 +1,25 @@
+---
+- name: Set up Ansible Bastion
+  hosts: localhost
+  tasks:
+  - name: install packages
+    yum:
+      name:
+        - python-devel 
+        - krb5-devel 
+        - krb5-libs 
+        - krb5-workstation 
+        - python-pip 
+        - gcc
+        - python-ldap
+        - sshpass   
+
+  - name: install pip dep
+    pip:
+      name: pywinrm
+
+- name: Set up Windows stuff
+  hosts: windows
+
+  roles:
+    - win_ad_install
